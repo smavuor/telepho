@@ -1,0 +1,96 @@
+
+    const express = require('express')
+    const app = express()
+    const bodyParser = require('body-parser')
+    const cors = require('cors')
+    app.use(cors())
+    app.use(bodyParser.json())
+    app.use(express.static('build'))
+
+    let persons =  [
+          {
+            "name": "Arto Hellas",
+            "number": "040-123456",
+            "id": 1
+          },
+          {
+            "name": "Martti Tienari",
+            "number": "040-123456",
+            "id": 2
+          },
+          {
+            "name": "Arto Järvinen",
+            "number": "040-123456",
+            "id": 3
+          },
+          {
+            "name": "Lea Kutvonen",
+            "number": "040-123456",
+            "id": 4
+          }
+        ]
+
+
+        function getRandomInt(max) {
+      return (Math.floor(Math.random() * Math.floor(max))+5);
+    }
+      function tarkastaNimi(uusiNimi){
+        for (var i = 0; i < persons.length; i++) {
+          if(uusiNimi===persons[i].name){
+          return true}
+        }
+        {return false}
+      }
+        app.post('/api/persons', (request, response) => {
+          const body = request.body
+          if (tarkastaNimi(body.name)) {
+            return response.status(400).json({error: 'Name must be unique!'})
+          }
+          if (body.name.length <= 2) {
+            return response.status(400).json({error: 'name missing or too short'})
+          }
+         if (body.number.length <= 5) {
+            return response.status(400).json({error: 'number missing or too short'})
+          }
+
+          const person = {
+            name: body.name,
+            number: body.number,
+            id: getRandomInt(95)
+          }
+          persons = persons.concat(person)
+          response.json(person)
+        })
+
+      //  app.get('/', (req, res) => {
+      //    res.send('<h1> Ei toimi </h1>')
+      //  })
+
+        app.get('/api/persons', (req, res) => {
+          res.json(persons)
+        })
+
+        app.delete('/api/persons/:id', (request, response) => {
+      const id = Number(request.params.id)
+      persons = persons.filter(person => person.id !== id)
+
+      response.status(204).end()
+    })
+
+
+        app.get('/api/persons/:id', (request, response) => {
+          const id = Number(request.params.id)
+          const person = persons.find( person => person.id ===id)
+          if (person) {
+       response.json(person)
+     } else {
+       response.status(404).end()
+     }
+
+        })
+
+
+        const PORT = process.env.PORT || 3002
+        app.listen(PORT, () => {
+          console.log(`Server running on port ${PORT}`)
+        })
