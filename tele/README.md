@@ -1,3 +1,1 @@
-
--
--https://floating-plains-96385.herokuapp.com/
+Harjoituksessa lisättiin yhteystiedot puhelinluetteloon, josta oli myös mahdollista poistaa yhteystietoja. Tiedot tallennettiin tietokantaan, jonka avulla oli helppo käsitellä yhteystietoja.
